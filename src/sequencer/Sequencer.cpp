@@ -44,7 +44,7 @@ void Sequence::play() {
     byte tick = (tick_num / this->values[6]) % length;
     if (start_gates && this->values[tick + 1] <= 127) {
         digitalWrite(SEQ_OUT, HIGH);
-        OUT_CV(0, (int) round(4095. * this->values[tick + 1] / 60));
+        OUT_CV(0, (int) round(4095. * this->values[tick + 1] / NOTE_MAX));
         this->gate_open = true;
     } else if (this->gate_open && 
             now - lastTimeTick >= values[7] * delayBetweenTick / 10) {

@@ -6,7 +6,12 @@
 #define MODULE_H
 #include <Arduino.h>
 
-#define NOTE_MAX 60 /**< C5 (MIDDLE C = C4 ?)*/
+/**
+ * NOTE_MAX vaut B4 par contrainte du DAC 12 bits.
+ *
+ * MIDDLE C = C4 ?
+ */
+#define NOTE_MAX 59 
 #define NOTE_MIN 0 /**< C0 */
 #define BPM_MIN 30 /**<min bpm of the module */
 #define BPM_MAX 240 /**<max bpm of the module */

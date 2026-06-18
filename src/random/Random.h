@@ -57,12 +57,10 @@ class Random : public Module
         for (int i = 0; i < TM_SIZE; i++) {
             this->notes[i] = 0;
         }
-        init_arrays();
         length = 0;
     }  
     void getString(char str[8], byte item) override;
     void set_value_constraint(byte item) override;
-    void init_arrays();
     void play() override;
     bool on_press_value(byte selectedIndex) override;
     byte get_count(byte scale, byte note);

@@ -16,18 +16,28 @@ const char *STR_SCALES[NUM_SCALE] =
  * Nombre de notes dont la hauteur est inférieure
  * ou égale au rang.
  */
-byte Random::count[NUM_SCALE][12];
+byte Random::count[NUM_SCALE][12] = {
+    { 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, },
+    { 1,  1,  2,  2,  3,  4,  4,  5,  5,  6,  6,  7, },
+    { 1,  1,  2,  2,  3,  3,  3,  4,  4,  5,  5,  5, },
+    { 1,  1,  2,  3,  3,  4,  4,  5,  6,  6,  6,  7, },
+};
 
 /**
  * Tableaux de 0 et 1 suivant que la note est dans la gamme
  * ou pas.
  */
-byte Random::scales[NUM_SCALE][12];
+byte Random::scales[NUM_SCALE][12] = {
+    { 1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, },
+    { 1,  0,  1,  0,  1,  1,  0,  1,  0,  1,  0,  1, },
+    { 1,  0,  1,  0,  1,  0,  0,  1,  0,  1,  0,  0, },
+    { 1,  0,  1,  1,  0,  1,  0,  1,  1,  0,  0,  1, },
+};
 
 /**
  * Rang des notes de la gamme.
  */
-byte Random::pitchs[NUM_SCALE][12] = {
+byte Random::pitchs[NUM_SCALE][12] = { // i-th pitch in C
     {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11}, // chromatic
     {0, 2, 4, 5, 7, 9, 11},                 // major
     {0, 2, 4, 7, 9},                        // pentatonic
@@ -110,37 +120,24 @@ void Random::set_value_constraint(byte item) {
 }
 
 /**
- * Alimentation des tableaux scales et count.
- */
-void Random::init_arrays() {
-    for(int scale = 0; scale < NUM_SCALE; scale++) {
-        for(int pitch = 0; pitch < 12; pitch++) {
-            scales[scale][pitch] = 0;
-        }
-        for(int i = 0; i < scale_size[scale]; i++) {
-            scales[scale][pitchs[scale][i]] = 1;
-        }
-        count[scale][0] = 1;
-        for(int i = 1; i < 12; i++) {
-            count[scale][i] = count[scale][i - 1] + scales[scale][i];
-        }
-    }
-}
-
-/**
- * Fonction qui retourne le nombre de notes inférieures
- * ou égales à **note** dans la gamme **scale**.
+ * @brief Retourne un nombre de notes.
+ *
+ * Pour une gamme donnée et une hauteur donnée, retourne
+ * le nombre de notes inférieure ou égale à cette hauteur
+ * dans cette gamme.
  */
 byte Random::get_count(byte scale, byte note) {
-    // lower or equal pitch 
+    // lower pitch 
     return count[scale][11] * (note / 12) + 
         count[scale][note % 12] -
         scales[scale][note % 12];
 }
 
 /**
- * Fonction qui retourne la hauteur de la note en fonction de
- * son rang.
+ * @brief Retourne une hauteur de note.
+ *
+ * Pour une gamme donnée et un rang donné, retourne
+ * la hauteur correspondante.
  */
 byte Random::get_pitch(byte scale, byte rank) {
     return 12 * (rank / scale_size[scale]) + 
@@ -148,8 +145,11 @@ byte Random::get_pitch(byte scale, byte rank) {
 }
 
 /**
- * Fonction qui retourne une hauteur aléatoire uniformément
- * entre **min** inclus et **max** exclus.
+ * @brief Retourne une hauteur de note aléatoire.
+ *
+ * Pour une gamme donnée et une tonalité donnée, retourne
+ * une hauteur aléatoire comprise entre min (inclus) 
+ * et max (exclus) pour un tirage uniforme.
  */
 byte Random::get_rand_note(byte scale, byte tone, byte min, byte max) {
     byte a = get_count(scale, min - tone + 12);
@@ -157,7 +157,9 @@ byte Random::get_rand_note(byte scale, byte tone, byte min, byte max) {
     if (a == b) {
         return 0;
     }
+    // rank in the C range with uniform distribution
     byte r = random(a, b);
+    // pitch in tone
     byte note = tone + get_pitch(scale, r);
     if(max <= note) {
         note -= 12;
@@ -199,7 +201,7 @@ void Random::play() {
         if(this->values[4]) {
             pitch = (60 + pitch + randomize()) % 60;
         }
-        OUT_CV(1, (int) round(4095. * pitch / 60));
+        OUT_CV(1, (int) round(4095. * pitch / NOTE_MAX));
         this->gate_open = true;
     } else if (this->gate_open && now - lastTimeTick >= 
             this->values[3] * delayBetweenTick / 8) {
