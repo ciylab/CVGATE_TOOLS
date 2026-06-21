@@ -44,11 +44,6 @@ byte Random::pitchs[NUM_SCALE][12] = { // i-th pitch in C
     {0, 2, 3, 5, 7, 8, 11},                 // harmonic
 };
 
-/**
- * Taille des gammes.
- */
-byte Random::scale_size[NUM_SCALE] = {12, 7, 5, 7};
-
 extern bool externalClock;
 extern unsigned long lastTimeTick;
 extern unsigned long delayBetweenTick;
@@ -128,9 +123,9 @@ void Random::set_value_constraint(byte item) {
  */
 byte Random::get_count(byte scale, byte note) {
     // lower pitch 
-    return count[scale][11] * (note / 12) + 
-        count[scale][note % 12] -
-        scales[scale][note % 12];
+    int size = count[scale][11];
+    return size * (note / 12) + 
+        count[scale][note % 12] - scales[scale][note % 12];
 }
 
 /**
@@ -140,8 +135,8 @@ byte Random::get_count(byte scale, byte note) {
  * la hauteur correspondante.
  */
 byte Random::get_pitch(byte scale, byte rank) {
-    return 12 * (rank / scale_size[scale]) + 
-        pitchs[scale][rank % scale_size[scale]];  
+    int size = count[scale][11];
+    return 12 * (rank / size) + pitchs[scale][rank % size];  
 }
 
 /**
@@ -152,19 +147,12 @@ byte Random::get_pitch(byte scale, byte rank) {
  * et max (exclus) pour un tirage uniforme.
  */
 byte Random::get_rand_note(byte scale, byte tone, byte min, byte max) {
-    byte a = get_count(scale, min - tone + 12);
-    byte b = get_count(scale, max - tone + 12);
-    if (a == b) {
-        return 0;
-    }
+    byte a = get_count(scale, min + 12 - tone);
+    byte b = get_count(scale, max + 12 - tone);
     // rank in the C range with uniform distribution
-    byte r = random(a, b);
+    byte rank = random(a, b);
     // pitch in tone
-    byte note = tone + get_pitch(scale, r);
-    if(max <= note) {
-        note -= 12;
-    }
-    return note;
+    return tone + get_pitch(scale, rank) - 12;
 }
 
 int Random::randomize() {
