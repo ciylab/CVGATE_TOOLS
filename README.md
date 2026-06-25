@@ -5,6 +5,7 @@
 ## Exemple de configuration 
 
 Dans un rack on peut simultanément générer :
+
 - un kick
 - un snare
 - une ligne de basse
