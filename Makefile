@@ -101,7 +101,7 @@ metadata:
 	@echo "header-includes:" >> $(METADATA)
 	@echo '  - \\renewcommand{\\familydefault}{\sfdefault}' >> $(METADATA)
 	@echo "---\n" >> $(METADATA)
-	@echo "![Paramètres](docs/assets/images/$(PROJECT)_menus.png)\n" >> $(METADATA)
+	@echo "![Paramètres](assets/images/$(PROJECT)_menus.png)\n" >> $(METADATA)
 
 .PHONY: man
 man: metadata
@@ -112,8 +112,10 @@ man: metadata
 	@cat $(DOCS)/Tech.md >> $(MAN)
 	@soffice --convert-to png --outdir docs docs/menus.odg 1> /dev/null 2>&1
 	@mogrify -resize 75% docs/menus.png
-	@mv docs/menus.png docs/assets/images/$(PROJECT)_menus.png
-	@pandoc $(MAN) -V geometry:margin=2cm -o man/$(PROJECT)_MANUAL_FR.pdf
+	@cp docs/menus.png docs/assets/images/$(PROJECT)_menus.png
+	@mv docs/menus.png $(JEKYLL_DIR)/assets/images/$(PROJECT)_menus.png
+	@cd docs; \
+	pandoc MANUAL_FR.md -V geometry:margin=2cm -o ../man/$(PROJECT)_MANUAL_FR.pdf
 	@mv docs/MANUAL_FR.md $(JEKYLL_DIR)/$(PROJECT)_MANUAL_FR.md
 
 manifest:
