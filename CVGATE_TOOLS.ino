@@ -9,7 +9,6 @@
  */
 #include <U8x8lib.h>
 #include <Versatile_RotaryEncoder.h>
-#include <avr/pgmspace.h>
 
 /*** base ***/
 #include "src/base/Display.h"
