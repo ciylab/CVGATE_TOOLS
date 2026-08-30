@@ -6,5 +6,7 @@
 #define DAC_H
 #include <SPI.h>
 
-void OUT_CV(int ch, int cv);
+void calibrate(int8_t rotation);
+void send_cv(int ch, int cv);
+void send_pitch(int ch, byte pitch);
 #endif

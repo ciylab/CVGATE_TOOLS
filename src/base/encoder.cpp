@@ -5,11 +5,13 @@
 #include "encoder.h"
 #include "Display.h"
 #include "Page.h"
+#include "dac.h"
 
 extern byte selectedIndex;
 extern byte current_page;
 extern Display oled;
 extern bool externalClock;
+extern int referenceC4cv;
 
 /**
  * Vrai si une valeur est affichée sur l'écran. Utile pour
@@ -64,6 +66,7 @@ void handleLongPress0() {
  */
 void handleRotate1(int8_t rotation) {
     if (current_page == 0) {
+        calibrate(rotation);
         return;
     }
     if (current_page == 1 && selectedIndex == 5) {

@@ -20,7 +20,7 @@ CFLAGS      := --build-property build.extra_flags="$(CFLAGS)"
 BIN_DIR     := bin/$(board)
 SRCINO      := $(PROJECT).ino
 HEX         := $(BIN_DIR)/$(SRCINO).hex
-FLASH       := -U flash:w:bin/firmware.hex:i
+FLASH       := -U flash:w:bin/firmware_$(board).hex:i
 FUSES       := -U fuse2:w:0x01:m -U fuse5:w:0xC9:m -U fuse8:w:0x00:m
 UFLAGS      := $(FLASH)
 DOXYFILE    :=
@@ -69,7 +69,7 @@ all: debug compile clean docs
 compile: $(SRCINO)
 	$(info **************** build $(VERSION))
 	@arduino-cli compile --warnings all -b $(FQBN) $(CFLAGS) --output-dir $(BIN_DIR)
-	@cp $(HEX) bin/firmware.hex
+	@cp $(HEX) bin/firmware_$(board).hex
 
 clean: 
 	$(info **************** delete unused binaries files) 

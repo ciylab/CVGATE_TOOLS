@@ -189,7 +189,7 @@ void Random::play() {
         if(this->values[4]) {
             pitch = (60 + pitch + randomize()) % 60;
         }
-        OUT_CV(1, (int) round(4095. * pitch / NOTE_MAX));
+        send_pitch(1, pitch);
         this->gate_open = true;
     } else if (this->gate_open && now - lastTimeTick >= 
             this->values[3] * delayBetweenTick / 8) {

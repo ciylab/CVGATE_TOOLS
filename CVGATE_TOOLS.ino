@@ -193,6 +193,9 @@ void handle_time() {
     }
 }
 
+/** La valeur de référence pour calibrer C4. */
+int referenceC4cv = 3276;
+
 /**
  * @brief Initialisation.
  *
